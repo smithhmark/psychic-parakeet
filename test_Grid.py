@@ -65,7 +65,7 @@ def simple_puzzle_answer():
             5,1,9,3,2,6,8,7,4,
             2,4,8,9,5,7,1,3,6,
             7,6,3,4,1,8,2,5,9,]
-    return list(map(lambda k: k+1, rawdata))
+    return list(map(lambda k: k-1, rawdata))
 
 @pytest.fixture
 def simple_grid_puzzle(simple_puzzle):
@@ -123,8 +123,8 @@ def test_update_uncertainty(empty_grid):
     assert empty_grid._uncertainty == expected_uncertainty
 
 
-def test_update_state(simple_grid_puzzle):
-    discovered = simple_grid_puzzle._update_state()
+def test_update_state_once(simple_grid_puzzle):
+    discovered = simple_grid_puzzle._update_state_once()
     assert simple_grid_puzzle.at(4,4) == 7
     changes = 0
     for ii, ov in enumerate(simple_grid_puzzle._orig_board):
@@ -132,3 +132,12 @@ def test_update_state(simple_grid_puzzle):
             changes += 1
     assert discovered == changes
 
+def test_update_state(simple_grid_puzzle, simple_puzzle_answer):
+    cycles = simple_grid_puzzle._update_state()
+    diffs = 0
+    print(simple_grid_puzzle._board)
+    for ii, ov in enumerate(simple_grid_puzzle._board):
+        if ov != simple_puzzle_answer[ii]:
+            diffs += 1
+    assert diffs == 0
+    assert cycles == 5

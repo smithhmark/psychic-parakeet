@@ -91,7 +91,7 @@ class Grid():
             if self._board[ii] is None:
                 self._uncertainty[ii] = self._symbols - nopes
 
-    def _update_state(self):
+    def _update_state_once(self):
         discoveries = 0
         for ii, maybes in enumerate(self._uncertainty):
             if maybes is not None and len(maybes) == 1:
@@ -99,5 +99,12 @@ class Grid():
                 discoveries += 1
         if discoveries > 0:
             self._populate_uncertainties()
-
         return discoveries
+
+    def _update_state(self):
+        cycles = 0
+        changes = self._update_state_once()
+        while changes > 0:
+            cycles += 1
+            changes = self._update_state_once()
+        return cycles
