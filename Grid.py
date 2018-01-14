@@ -1,6 +1,4 @@
 
-grid = "grid"
-
 class Grid():
     def __init__(self, symbolcnt=9, board=None):
         self._symbols = {x for x in range(symbolcnt)}
@@ -18,7 +16,8 @@ class Grid():
                     raise ValueError("board cannot contain symbols outside"
                       + repr(allowed))
             if len(board) != self._symbolcnt ** 2:
-                raise ValueError("board must be a square exactly symbolcnt on a side")
+                raise ValueError(
+                  "board must be a square exactly symbolcnt on a side")
             self._board = board[:]
 
     def _offset(self, x, y):

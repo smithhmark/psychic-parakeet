@@ -3,9 +3,6 @@ from unittest.mock import Mock
 
 import Grid
 
-def test_grid():
-    assert Grid.grid == "grid"
-
 @pytest.fixture
 def empty_grid():
     return Grid.Grid()
