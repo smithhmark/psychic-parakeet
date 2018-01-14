@@ -15,13 +15,11 @@ class Grid():
 
             for ii, pos in enumerate(board):
                 if pos not in allowed:
-                    raise ValueError("board cannot contain symbols outside"+ repr(allowed))
-            if all(map(lambda pos: pos in allowed, board)):
-              #and not any(map(lambda pos: pos not in allowed, board)):
-                self._board = board[:]
-
-            else:
-                raise ValueError("board must be square, symbolcnt on a side, and not contain any symbols outside of the allowed range")
+                    raise ValueError("board cannot contain symbols outside"
+                      + repr(allowed))
+            if len(board) != self._symbolcnt ** 2:
+                raise ValueError("board must be a square exactly symbolcnt on a side")
+            self._board = board[:]
 
     def _offset(self, x, y):
         return y * self._symbolcnt + x
