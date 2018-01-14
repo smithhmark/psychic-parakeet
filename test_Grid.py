@@ -14,6 +14,11 @@ def test_standard_constructor(empty_grid):
     for pos in empty_grid._board:
         assert pos is None
 
+def test_set(empty_grid):
+    assert empty_grid._board[0] == None
+    empty_grid.set(0,0,0)
+    assert empty_grid._board[0] == 0
+
 def test_offset_calculation_sz2():
     g = Grid.Grid()
     g._symbolcnt = 2
@@ -32,15 +37,21 @@ def test_offset_calculation_sz2():
 #  http://elmo.sbs.arizona.edu/sandiway/sudoku/examples.html
 @pytest.fixture
 def simple_puzzle():
-    data = [ None,None,None, 1,5,None, 6,None,0,
-            5,7,None,  None,6,None, None,8,None,
-            0,8,None,  None,None,3,  4,None,None,
-            7,1,None,  0,None,None,  None,3,None,
-            None,None,3,  5,None,1,  8,None,None,
-            None,4,None,  None,None,2,  None,1,7,
-            None,None,8,  2,None,None,  None,6,3,
-            None,3,None, None,4,None,  None,2,5,
-            6,None,2,  None,0,7, None,None,None]
+    rawdata = [None,None,None,2,6,None,7,None,1,
+            6,8,None,None,7,None,None,9,None,
+            1,9,None,None,None,4,5,None,None,
+            8,2,None,1,None,None,None,4,None,
+            None,None,4,6,None,2,9,None,None,
+            None,5,None,None,None,3,None,2,8,
+            None,None,9,3,None,None,None,7,4,
+            None,4,None,None,5,None,None,3,6,
+            7,None,3,None,1,8,None,None,None,]
+    data = []
+    for ii in rawdata:
+        if ii is None:
+            data.append(ii)
+        else:
+            data.append(ii - 1)
     return data
 
 @pytest.fixture
@@ -93,4 +104,31 @@ def test_indices_to_check(empty_grid):
     expected.update(range(9,18))
     expected.update(range(4, 81, 9))
     assert empty_grid._indices_to_check(x, y) == expected
-    
+
+def test_update_uncertainty(empty_grid):
+    expected_uncertainty = [empty_grid._symbols.copy() for ii in range(81)]
+    expected_board = [None] * 81
+    assert empty_grid._uncertainty == expected_uncertainty
+    assert empty_grid._board == expected_board
+
+    sym = 0
+    empty_grid.set(0,0,sym)
+    assert empty_grid._board[0] == 0
+    assert empty_grid._board[1] == None
+    empty_grid._populate_uncertainties()
+
+    for ii in empty_grid._indices_to_check(0,0):
+        expected_uncertainty[ii].remove(sym)
+    expected_uncertainty[0] = None
+    assert empty_grid._uncertainty == expected_uncertainty
+
+
+def test_update_state(simple_grid_puzzle):
+    discovered = simple_grid_puzzle._update_state()
+    assert simple_grid_puzzle.at(4,4) == 7
+    changes = 0
+    for ii, ov in enumerate(simple_grid_puzzle._orig_board):
+        if ov != simple_grid_puzzle._board[ii]:
+            changes += 1
+    assert discovered == changes
+
