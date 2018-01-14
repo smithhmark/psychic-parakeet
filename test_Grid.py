@@ -31,6 +31,8 @@ def test_offset_calculation_sz2():
     assert g._offset(1,1) == 3
     assert g.at(1,1) == 3
 
+# the following simple puzzle and its answer is from:
+#  http://elmo.sbs.arizona.edu/sandiway/sudoku/examples.html
 @pytest.fixture
 def simple_puzzle():
     data = [ None,None,None, 1,5,None, 6,None,0,
