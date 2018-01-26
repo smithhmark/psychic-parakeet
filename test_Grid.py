@@ -18,6 +18,15 @@ def test_set(empty_grid):
     assert empty_grid._board[0] == None
     empty_grid.set(0,0,0)
     assert empty_grid._board[0] == 0
+    with pytest.raises(ValueError):
+        empty_grid.set(0,0,'A')
+    with pytest.raises(ValueError):
+        empty_grid.set(0,0,10)
+    ret = empty_grid.set(0,0,1)
+    assert ret is None
+    ret = empty_grid.set(1,0,1)
+    assert ret == (0,0)
+
 
 def test_offset_calculation_sz2():
     g = Grid.Grid()

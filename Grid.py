@@ -34,8 +34,15 @@ class Grid():
         return self._board[self._offset(x, y)]
 
     def set(self, x, y, val):
+        """updates the grid at <x>,<y> to be <val>
+        if that update would create a conflict, it returns the x,y of the
+        conflicting location.
+        """
         if val not in self._symbols:
             raise ValueError("value must be a known symbol")
+        for ind in self._indices_to_check(x,y):
+            if self._board[ind] == val:
+               return self._index_to_coord(ind)
         self._board[self._offset(x,y)] = val
 
     def _indices_for_box(self, x, y):
@@ -60,6 +67,9 @@ class Grid():
         return iis
 
     def _indices_to_check(self, x, y, all=True):
+        """produces a set of indices into _board that have impact on given 
+        coordinate.
+        """
         iis = set()
         iis.update(self._indices_for_row(y))
         iis.update(self._indices_for_col(x))
