@@ -102,9 +102,21 @@ class Grid():
         return discoveries
 
     def _update_state(self):
+        """continuously applies _update_state_once until no further changes are made.
+        returns the number of times _update_state_once is called
+        """
         cycles = 0
         changes = self._update_state_once()
         while changes > 0:
             cycles += 1
             changes = self._update_state_once()
         return cycles
+
+    def solved(self):
+        """return True if there are no unpopulated cells
+        """
+        for ii in self._board:
+            if ii is None:
+                return False
+        return True
+

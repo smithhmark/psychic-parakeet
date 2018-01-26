@@ -141,3 +141,8 @@ def test_update_state(simple_grid_puzzle, simple_puzzle_answer):
             diffs += 1
     assert diffs == 0
     assert cycles == 5
+
+def test_solved(empty_grid,simple_grid_puzzle,simple_grid_complete):
+    assert empty_grid.solved() == False
+    assert simple_grid_puzzle.solved() == False
+    assert simple_grid_complete.solved() == True
