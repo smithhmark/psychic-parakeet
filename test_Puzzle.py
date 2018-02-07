@@ -62,25 +62,6 @@ def test_simple_puzzle(simple_grid_puzzle):
     assert simple_grid_puzzle.at(0,0) == None
     assert simple_grid_puzzle.at(7,5) == 1
 
-def test_indices_for_box(empty_grid):
-    assert empty_grid._indices_for_box(1,0) == [3,4,5, 12,13,14, 21,22,23]
-    assert empty_grid._indices_for_box(0,1) == [27,28,29, 36,37,38, 45,46,47]
-
-def test_indices_for_row(empty_grid):
-    assert empty_grid._indices_for_row(0) == list(range(9))
-    assert empty_grid._indices_for_row(1) == list(range(9, 18))
-
-def test_indices_for_col(empty_grid):
-    assert empty_grid._indices_for_col(0) == list(range(0,81,9))
-    assert empty_grid._indices_for_col(1) == list(range(1,81,9))
-
-def test_indices_to_check(empty_grid):
-    x, y = 4, 1
-    expected = set([3,4,5, 12,13,14, 21,22,23])
-    expected.update(range(9,18))
-    expected.update(range(4, 81, 9))
-    assert empty_grid._indices_to_check(x, y) == expected
-
 def test_update_uncertainty(empty_grid):
     expected_uncertainty = [empty_grid._symbols.copy() for ii in range(81)]
     expected_board = [None] * 81

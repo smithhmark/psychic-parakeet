@@ -1,10 +1,15 @@
 from math import sqrt
 
+from Scaler import Scaler
+
+
 class Puzzle():
     def __init__(self, symbolcnt=9, board=None):
         self._symbols = {x for x in range(symbolcnt)}
         self._symbolcnt = symbolcnt
         self._basenum = int(sqrt(symbolcnt))
+        self._scaler = Scaler(symbolcnt)
+
         if self._basenum ** 2 != symbolcnt:
             raise ValueError("symbolcnt must be a perfect square")
 
@@ -40,10 +45,11 @@ class Puzzle():
         """
         if val not in self._symbols:
             raise ValueError("value must be a known symbol")
-        for ind in self._indices_to_check(x,y):
-            if self._board[ind] == val:
-               return self._index_to_coord(ind)
-        self._board[self._offset(x,y)] = val
+        for idx in self._scaler.locs_to_check(x,y):
+            if self._board[idx] == val:
+               return self._scaler.idx_to_coord(idx)
+
+        self._board[self._scaler.coord_to_idx(x,y)] = val
 
     def _indices_for_box(self, x, y):
         iis = []
@@ -70,6 +76,8 @@ class Puzzle():
         """produces a set of indices into _board that have impact on given 
         coordinate.
         """
+        return self._scaler.locs_to_check(x,y,not all)
+
         iis = set()
         iis.update(self._indices_for_row(y))
         iis.update(self._indices_for_col(x))
@@ -94,8 +102,7 @@ class Puzzle():
         self._uncertainty = [None for unused in self._board]
         #self._uncertainty = [None for unused in range(len(self._board))]
         for loc, val in asserted:
-            pt = self._index_to_coord(loc)
-            for index in self._indices_to_check(pt[0], pt[1], False):
+            for index in self._scaler.locs_to_check_by_indx(loc, True):
                 cant_haves[index].add(val)
         for ii, nopes in enumerate(cant_haves):
             if self._board[ii] is None:
