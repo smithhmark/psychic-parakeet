@@ -1,6 +1,6 @@
 from math import sqrt
 
-class Grid():
+class Puzzle():
     def __init__(self, symbolcnt=9, board=None):
         self._symbols = {x for x in range(symbolcnt)}
         self._symbolcnt = symbolcnt

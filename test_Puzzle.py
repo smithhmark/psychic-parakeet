@@ -1,11 +1,11 @@
 import pytest
 from unittest.mock import Mock
 
-import Grid
+import Puzzle
 
 @pytest.fixture
 def empty_grid():
-    return Grid.Grid()
+    return Puzzle.Puzzle()
 
 def test_standard_constructor(empty_grid):
     assert len(empty_grid._symbols) == 9
@@ -29,7 +29,7 @@ def test_set(empty_grid):
 
 
 def test_offset_calculation_sz2():
-    g = Grid.Grid()
+    g = Puzzle.Puzzle()
     g._symbolcnt = 2
     g._board = list(range(4))
 
@@ -117,15 +117,15 @@ def hard_puzzle_answer():
 
 @pytest.fixture
 def simple_grid_puzzle(simple_puzzle):
-    return Grid.Grid(9,simple_puzzle)
+    return Puzzle.Puzzle(9,simple_puzzle)
 
 @pytest.fixture
 def simple_grid_complete(simple_puzzle_answer):
-    return Grid.Grid(9,simple_puzzle_answer)
+    return Puzzle.Puzzle(9,simple_puzzle_answer)
 
 def no_test_sz2_constructort():
     board = [0,1,1,0]
-    g = Grid.Grid(2, board)
+    g = Puzzle.Puzzle(2, board)
     assert g._symbolcnt == 2
     assert g._board == board
 
