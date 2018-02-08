@@ -10,7 +10,7 @@ class Scaler:
         self._symbolcnt = numsymbols
         self._basenum = int(sqrt(numsymbols))
 
-    def coord_to_idx(self, x,y):
+    def coord_to_idx(self, x, y):
         return y * self._symbolcnt + x
 
     def idx_to_coord(self, idx):

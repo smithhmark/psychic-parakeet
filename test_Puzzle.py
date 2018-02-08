@@ -4,102 +4,89 @@ from unittest.mock import Mock
 import Puzzle
 
 @pytest.fixture
-def empty_grid():
+def empty_puzzle():
     return Puzzle.Puzzle()
 
-def test_standard_constructor(empty_grid):
-    assert len(empty_grid._symbols) == 9
-    assert empty_grid._symbols == {x for x in range(9)}
-    assert len(empty_grid._board) == 9 * 9
-    for pos in empty_grid._board:
+@pytest.fixture
+def easy_puzzle(simple_puzzle_data):
+    return Puzzle.Puzzle(9, simple_puzzle_data)
+
+@pytest.fixture
+def easy_puzzle_complete(simple_puzzle_answer):
+    return Puzzle.Puzzle(9, simple_puzzle_answer)
+
+def test_standard_constructor(empty_puzzle):
+    assert len(empty_puzzle._symbols) == 9
+    assert empty_puzzle._symbols == {x for x in range(9)}
+    assert empty_puzzle._st._len == 9 * 9
+    for pos in empty_puzzle._st._st:
         assert pos is None
 
-def test_set(empty_grid):
-    assert empty_grid._board[0] == None
-    empty_grid.set(0,0,0)
-    assert empty_grid._board[0] == 0
+def test_set(empty_puzzle):
+    assert empty_puzzle.at(0,0) == None
+    empty_puzzle.set(0,0,0)
+    assert empty_puzzle.at(0,0) == 0
+
     with pytest.raises(ValueError):
-        empty_grid.set(0,0,'A')
+        empty_puzzle.set(0,0,'A')
     with pytest.raises(ValueError):
-        empty_grid.set(0,0,10)
-    ret = empty_grid.set(0,0,1)
+        empty_puzzle.set(0,0,10)
+
+    ret = empty_puzzle.set(0,0,1)
     assert ret is None
-    ret = empty_grid.set(1,0,1)
+
+    ret = empty_puzzle.set(1,0,1)
     assert ret == (0,0)
 
-
-def test_offset_calculation_sz2():
-    g = Puzzle.Puzzle()
-    g._symbolcnt = 2
-    g._board = list(range(4))
-
-    assert g._offset(0,0) == 0
-    assert g.at(0,0) == 0
-    assert g._offset(1,0) == 1
-    assert g.at(1,0) == 1
-    assert g._offset(0,1) == 2
-    assert g.at(0,1) == 2
-    assert g._offset(1,1) == 3
-    assert g.at(1,1) == 3
-
-
-@pytest.fixture
-def simple_grid_puzzle(simple_puzzle):
-    return Puzzle.Puzzle(9,simple_puzzle)
-
-@pytest.fixture
-def simple_grid_complete(simple_puzzle_answer):
-    return Puzzle.Puzzle(9,simple_puzzle_answer)
 
 def no_test_sz2_constructort():
     board = [0,1,1,0]
     g = Puzzle.Puzzle(2, board)
     assert g._symbolcnt == 2
-    assert g._board == board
+    assert g._st._st == board
 
-def test_simple_puzzle(simple_grid_puzzle):
-    assert simple_grid_puzzle._symbolcnt == 9
-    assert simple_grid_puzzle.at(0,0) == None
-    assert simple_grid_puzzle.at(7,5) == 1
+def test_simple_puzzle(easy_puzzle):
+    assert easy_puzzle._symbolcnt == 9
+    assert easy_puzzle.at(0,0) == None
+    assert easy_puzzle.at(7,5) == 1
 
-def test_update_uncertainty(empty_grid):
-    expected_uncertainty = [empty_grid._symbols.copy() for ii in range(81)]
+def test_update_uncertainty(empty_puzzle):
+    expected_uncertainty = [empty_puzzle._symbols.copy() for ii in range(81)]
     expected_board = [None] * 81
-    assert empty_grid._uncertainty == expected_uncertainty
-    assert empty_grid._board == expected_board
+    assert empty_puzzle._uncertainty == expected_uncertainty
+    assert empty_puzzle._st._st == expected_board
 
     sym = 0
-    empty_grid.set(0,0,sym)
-    assert empty_grid._board[0] == 0
-    assert empty_grid._board[1] == None
-    empty_grid._populate_uncertainties()
+    empty_puzzle.set(0,0,sym)
+    assert empty_puzzle._st._st[0] == 0
+    assert empty_puzzle._st._st[1] == None
+    empty_puzzle._populate_uncertainties()
 
-    for ii in empty_grid._indices_to_check(0,0):
+    for ii in empty_puzzle._scaler.locs_to_check(0,0):
         expected_uncertainty[ii].remove(sym)
     expected_uncertainty[0] = None
-    assert empty_grid._uncertainty == expected_uncertainty
+    assert empty_puzzle._uncertainty == expected_uncertainty
 
-
-def test_update_state_once(simple_grid_puzzle):
-    discovered = simple_grid_puzzle._update_state_once()
-    assert simple_grid_puzzle.at(4,4) == 7
+def test_update_state_once(easy_puzzle):
+    discovered = easy_puzzle._update_state_once()
+    assert easy_puzzle.at(4,4) == 7
     changes = 0
-    for ii, ov in enumerate(simple_grid_puzzle._orig_board):
-        if ov != simple_grid_puzzle._board[ii]:
+    for ii, ov in enumerate(easy_puzzle._orig._st):
+        if ov != easy_puzzle._st._st[ii]:
             changes += 1
     assert discovered == changes
 
-def test_update_state(simple_grid_puzzle, simple_puzzle_answer):
-    cycles = simple_grid_puzzle._update_state()
+def test_update_state(easy_puzzle, simple_puzzle_answer):
+    cycles = easy_puzzle._update_state()
     diffs = 0
-    print(simple_grid_puzzle._board)
-    for ii, ov in enumerate(simple_grid_puzzle._board):
+    print(easy_puzzle._st._st)
+    for ii, ov in enumerate(easy_puzzle._st._st):
         if ov != simple_puzzle_answer[ii]:
             diffs += 1
     assert diffs == 0
     assert cycles == 5
 
-def test_solved(empty_grid,simple_grid_puzzle,simple_grid_complete):
-    assert empty_grid.solved() == False
-    assert simple_grid_puzzle.solved() == False
-    assert simple_grid_complete.solved() == True
+def test_solved(empty_puzzle, easy_puzzle, easy_puzzle_complete):
+    assert empty_puzzle.solved() == False
+    assert easy_puzzle.solved() == False
+    assert easy_puzzle_complete.solved() == True

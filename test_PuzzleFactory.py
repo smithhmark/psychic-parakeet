@@ -6,18 +6,18 @@ import PuzzleFactory
 def factory():
     return PuzzleFactory.PuzzleFactory()
 
-def test_easy(factory, simple_puzzle):
+def test_easy(factory, simple_puzzle_data):
     puzzle = factory.easy()
     diffs = 0
-    for e, s in zip(puzzle._board, simple_puzzle):
+    for e, s in zip(puzzle._st._st, simple_puzzle_data):
         if e != s:
             diffs += 1
     assert diffs == 0
 
-def test_hard(factory, hard_puzzle):
+def test_hard(factory, hard_puzzle_data):
     puzzle = factory.hard()
     diffs = 0
-    for h, s in zip(puzzle._board, hard_puzzle):
+    for h, s in zip(puzzle._st._st, hard_puzzle_data):
         if h != s:
             diffs += 1
     assert diffs == 0
