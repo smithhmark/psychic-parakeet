@@ -12,10 +12,30 @@ def symbols():
 def base_scaler(symbols):
     return Scaler.Scaler(len(symbols))
 
-def test_clone(symbols, base_scaler):
+@fixture
+def empty_state(symbols, base_scaler):
     st = State.State(symbols, base_scaler)
-    st2 = st.clone()
-    assert id(st) != id(st2)
-    assert id(st._st) != id(st2._st)
-    assert id(st._scaler) == id(st2._scaler)
-    assert id(st._symbols) == id(st2._symbols)
+    return st
+
+def test_clone(empty_state):
+    st2 = empty_state.clone()
+    assert id(empty_state) != id(st2)
+    assert id(empty_state._st) != id(st2._st)
+    assert id(empty_state._scaler) == id(st2._scaler)
+    assert id(empty_state._symbols) == id(st2._symbols)
+
+def test_stringify(empty_state):
+    expected = ""
+    for y in range(len(empty_state._symbols)):
+        expected += " None," * len(empty_state._symbols)
+        expected += "\n"
+    assert empty_state.stringify() == expected
+         
+    expected = ""
+    indent = 7
+    for y in range(len(empty_state._symbols)):
+        expected += " " * indent
+        expected += " None," * len(empty_state._symbols)
+        expected += "\n"
+    assert empty_state.stringify(indent) == expected
+

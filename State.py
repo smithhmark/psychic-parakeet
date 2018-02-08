@@ -50,3 +50,18 @@ class State:
             if ii is None:
                 return False
         return True
+
+    def stringify(self, indent=0):
+        """create a string rep of the State
+        """
+        outstr = ""
+        for y in range(9):
+            outstr += " " * indent
+            for x in range(9):
+                ch = self.at(x,y)
+                if ch is not None:
+                    outstr += "{: >5},".format(ch)
+                else:
+                    outstr += " None,"
+            outstr += '\n'
+        return outstr
