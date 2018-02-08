@@ -50,41 +50,6 @@ def test_simple_puzzle(easy_puzzle):
     assert easy_puzzle.at(0,0) == None
     assert easy_puzzle.at(7,5) == 1
 
-def test_update_uncertainty(empty_puzzle):
-    expected_uncertainty = [empty_puzzle._symbols.copy() for ii in range(81)]
-    expected_board = [None] * 81
-    assert empty_puzzle._uncertainty == expected_uncertainty
-    assert empty_puzzle._st._st == expected_board
-
-    sym = 0
-    empty_puzzle.set(0,0,sym)
-    assert empty_puzzle._st._st[0] == 0
-    assert empty_puzzle._st._st[1] == None
-    empty_puzzle._populate_uncertainties()
-
-    for ii in empty_puzzle._scaler.locs_to_check(0,0):
-        expected_uncertainty[ii].remove(sym)
-    expected_uncertainty[0] = None
-    assert empty_puzzle._uncertainty == expected_uncertainty
-
-def test_update_state_once(easy_puzzle):
-    discovered = easy_puzzle._update_state_once()
-    assert easy_puzzle.at(4,4) == 7
-    changes = 0
-    for ii, ov in enumerate(easy_puzzle._orig._st):
-        if ov != easy_puzzle._st._st[ii]:
-            changes += 1
-    assert discovered == changes
-
-def test_update_state(easy_puzzle, simple_puzzle_answer):
-    cycles = easy_puzzle._update_state()
-    diffs = 0
-    print(easy_puzzle._st._st)
-    for ii, ov in enumerate(easy_puzzle._st._st):
-        if ov != simple_puzzle_answer[ii]:
-            diffs += 1
-    assert diffs == 0
-    assert cycles == 5
 
 def test_solved(empty_puzzle, easy_puzzle, easy_puzzle_complete):
     assert empty_puzzle.solved() == False
